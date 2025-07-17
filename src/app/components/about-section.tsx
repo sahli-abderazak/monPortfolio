@@ -1,32 +1,27 @@
-"use client"
-
 import { Users, Zap, Target, Trophy } from "lucide-react"
 import { Card, CardContent } from "./ui/card"
-import { useLanguage } from "../contexts/language-context"
 
 export function AboutSection() {
-  const { t } = useLanguage()
-
   const qualities = [
     {
       icon: Users,
-      title: t("about.teamwork"),
-      description: t("about.teamworkDesc"),
+      title: "Travail en équipe",
+      description: "Collaboration efficace et communication fluide",
     },
     {
       icon: Zap,
-      title: t("about.autonomy"),
-      description: t("about.autonomyDesc"),
+      title: "Autonomie",
+      description: "Capacité à travailler de manière indépendante",
     },
     {
       icon: Target,
-      title: t("about.discipline"),
-      description: t("about.disciplineDesc"),
+      title: "Discipline",
+      description: "Rigueur et respect des délais",
     },
     {
       icon: Trophy,
-      title: t("about.motivation"),
-      description: t("about.motivationDesc"),
+      title: "Motivation",
+      description: "Passionné par les défis techniques",
     },
   ]
 
@@ -34,8 +29,12 @@ export function AboutSection() {
     <section id="apropos" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t("about.title")}</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">{t("about.description")}</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">À Propos de Moi</h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            {
+              "Jeune diplômé énergique et sérieux, passionné par le développement web avec une expérience pratique acquise lors de stages et formations spécialisées."
+            }
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {qualities.map((quality, index) => (
@@ -49,11 +48,11 @@ export function AboutSection() {
           ))}
         </div>
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">{t("about.interests")}</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">{"Centres d'Intérêt"}</h3>
           <div className="flex flex-wrap gap-4">
-            <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full">{t("about.football")}</span>
-            <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full">{t("about.fitness")}</span>
-            <span className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full">{t("about.socialMedia")}</span>
+            <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full">⚽ Football</span>
+            <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full">💪 Fitness</span>
+            <span className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full">📱 Réseaux sociaux</span>
           </div>
         </div>
       </div>
