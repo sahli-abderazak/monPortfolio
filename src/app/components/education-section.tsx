@@ -45,21 +45,21 @@ export function EducationSection() {
     )
 
     if (Array.isArray(educationData)) {
-      education = educationData
+      education = educationData as Education[]
     } else if (educationData && typeof educationData === "object") {
       // Si c'est un objet, essayer de le convertir en tableau
       education = Object.values(educationData).filter(
-        (item) => item && typeof item === "object" && "degree" in item,
-      ) as Education[]
+        (item): item is Education => item && typeof item === "object" && "degree" in item,
+      )
     }
 
     const formationsData = t("education.formations")
     if (Array.isArray(formationsData)) {
-      formations = formationsData
+      formations = formationsData as Formation[]
     } else if (formationsData && typeof formationsData === "object") {
       formations = Object.values(formationsData).filter(
-        (item) => item && typeof item === "object" && "title" in item,
-      ) as Formation[]
+        (item): item is Formation => item && typeof item === "object" && "title" in item,
+      )
     }
 
     const associativeData = t("education.associative")
@@ -86,7 +86,7 @@ export function EducationSection() {
             </h3>
             <div className="space-y-6">
               {education && education.length > 0 ? (
-                education.map((edu: any, index: number) => (
+                education.map((edu: Education, index: number) => (
                   <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
                     <CardHeader>
                       <CardTitle className="text-lg text-blue-600">{edu.degree || "Diplôme"}</CardTitle>
@@ -117,13 +117,12 @@ export function EducationSection() {
               )}
             </div>
           </div>
-
           {/* Formations */}
           <div>
             <h3 className="text-2xl font-bold text-gray-900 mb-6">{t("education.professionalTraining")}</h3>
             <div className="space-y-6">
               {formations && formations.length > 0 ? (
-                formations.map((formation: any, index: number) => (
+                formations.map((formation: Formation, index: number) => (
                   <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
                     <CardHeader>
                       <CardTitle className="text-lg text-blue-600">{formation.title || "Formation"}</CardTitle>
@@ -140,7 +139,6 @@ export function EducationSection() {
                 </div>
               )}
             </div>
-
             {/* Expérience associative */}
             {associative && associative.title && (
               <div className="mt-8">
