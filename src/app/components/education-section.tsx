@@ -1,17 +1,74 @@
 "use client"
-
 import { Calendar, MapPin, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { useLanguage } from "../contexts/language-context"
 
+interface Education {
+  degree: string
+  institution: string
+  period: string
+  location: string
+  type: string
+}
+
+interface Formation {
+  title: string
+  organizer: string
+  description: string
+}
+
+interface AssociativeExp {
+  title: string
+  company: string
+  period: string
+  location: string
+}
+
 export function EducationSection() {
   const { t } = useLanguage()
 
-  // Get data from translations
-  const education = (t("education.educationList") as any) || []
-  const formations = (t("education.formations") as any) || []
-  const associative = (t("education.associative") as any) || {}
+  // Get data from translations with safe fallbacks and debugging
+  let education: Education[] = []
+  let formations: Formation[] = []
+  let associative: AssociativeExp = { title: "", company: "", period: "", location: "" }
+
+  try {
+    const educationData = t("education.educationList")
+    console.log(
+      "Education data:",
+      educationData,
+      "Type:",
+      typeof educationData,
+      "Is array:",
+      Array.isArray(educationData),
+    )
+
+    if (Array.isArray(educationData)) {
+      education = educationData
+    } else if (educationData && typeof educationData === "object") {
+      // Si c'est un objet, essayer de le convertir en tableau
+      education = Object.values(educationData).filter(
+        (item) => item && typeof item === "object" && "degree" in item,
+      ) as Education[]
+    }
+
+    const formationsData = t("education.formations")
+    if (Array.isArray(formationsData)) {
+      formations = formationsData
+    } else if (formationsData && typeof formationsData === "object") {
+      formations = Object.values(formationsData).filter(
+        (item) => item && typeof item === "object" && "title" in item,
+      ) as Formation[]
+    }
+
+    const associativeData = t("education.associative")
+    if (associativeData && typeof associativeData === "object" && !Array.isArray(associativeData)) {
+      associative = associativeData as AssociativeExp
+    }
+  } catch (error) {
+    console.error("Error loading education data:", error)
+  }
 
   return (
     <section id="formation" className="py-20 bg-gray-50">
@@ -28,67 +85,84 @@ export function EducationSection() {
               {t("education.degrees")}
             </h3>
             <div className="space-y-6">
-              {education.map((edu: any, index: number) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-blue-600">{edu.degree}</CardTitle>
-                    <h4 className="text-gray-900 font-semibold">{edu.institution}</h4>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-col space-y-2">
-                      <div className="flex items-center text-gray-600">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        <span className="text-sm">{edu.period}</span>
+              {education && education.length > 0 ? (
+                education.map((edu: any, index: number) => (
+                  <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+                    <CardHeader>
+                      <CardTitle className="text-lg text-blue-600">{edu.degree || "Diplôme"}</CardTitle>
+                      <h4 className="text-gray-900 font-semibold">{edu.institution || "Institution"}</h4>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-col space-y-2">
+                        <div className="flex items-center text-gray-600">
+                          <Calendar className="h-4 w-4 mr-2" />
+                          <span className="text-sm">{edu.period || "Période"}</span>
+                        </div>
+                        <div className="flex items-center text-gray-600">
+                          <MapPin className="h-4 w-4 mr-2" />
+                          <span className="text-sm">{edu.location || "Lieu"}</span>
+                        </div>
+                        <Badge variant="outline" className="w-fit">
+                          {edu.type || "Formation"}
+                        </Badge>
                       </div>
-                      <div className="flex items-center text-gray-600">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        <span className="text-sm">{edu.location}</span>
-                      </div>
-                      <Badge variant="outline" className="w-fit">
-                        {edu.type}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Aucune formation à afficher pour le moment.</p>
+                  <p className="text-xs text-gray-400 mt-2">Vérifiez votre fichier de traductions.</p>
+                </div>
+              )}
             </div>
           </div>
+
           {/* Formations */}
           <div>
             <h3 className="text-2xl font-bold text-gray-900 mb-6">{t("education.professionalTraining")}</h3>
             <div className="space-y-6">
-              {formations.map((formation: any, index: number) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+              {formations && formations.length > 0 ? (
+                formations.map((formation: any, index: number) => (
+                  <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+                    <CardHeader>
+                      <CardTitle className="text-lg text-blue-600">{formation.title || "Formation"}</CardTitle>
+                      <h4 className="text-gray-900 font-semibold">{formation.organizer || "Organisme"}</h4>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">{formation.description || "Description"}</p>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Aucune formation professionnelle à afficher.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Expérience associative */}
+            {associative && associative.title && (
+              <div className="mt-8">
+                <h4 className="text-xl font-bold text-gray-900 mb-4">{t("education.associativeExp")}</h4>
+                <Card className="hover:shadow-lg transition-shadow duration-300">
                   <CardHeader>
-                    <CardTitle className="text-lg text-blue-600">{formation.title}</CardTitle>
-                    <h4 className="text-gray-900 font-semibold">{formation.organizer}</h4>
+                    <CardTitle className="text-lg text-blue-600">{associative.title}</CardTitle>
+                    <h4 className="text-gray-900 font-semibold">{associative.company}</h4>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-700">{formation.description}</p>
+                    <div className="flex items-center text-gray-600">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      <span className="text-sm">{associative.period}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600 mt-1">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      <span className="text-sm">{associative.location}</span>
+                    </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-            {/* Expérience associative */}
-            <div className="mt-8">
-              <h4 className="text-xl font-bold text-gray-900 mb-4">{t("education.associativeExp")}</h4>
-              <Card className="hover:shadow-lg transition-shadow duration-300">
-                <CardHeader>
-                  <CardTitle className="text-lg text-blue-600">{associative.title}</CardTitle>
-                  <h4 className="text-gray-900 font-semibold">{associative.company}</h4>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <span className="text-sm">{associative.period}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600 mt-1">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    <span className="text-sm">{associative.location}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

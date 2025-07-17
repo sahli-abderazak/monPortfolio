@@ -1,8 +1,12 @@
 "use server"
-
 import nodemailer from "nodemailer"
 
-export async function sendEmail(prevState: any, formData: FormData) {
+interface FormState {
+  success: boolean
+  message: string
+}
+
+export async function sendEmail(prevState: FormState | null, formData: FormData): Promise<FormState> {
   try {
     const name = formData.get("name") as string
     const email = formData.get("email") as string
@@ -41,7 +45,7 @@ export async function sendEmail(prevState: any, formData: FormData) {
           <div style="background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); padding: 30px; text-align: center;">
             <h1 style="color: white; margin: 0; font-size: 28px;">Nouveau Message Portfolio</h1>
           </div>
-          
+                    
           <div style="padding: 30px;">
             <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid #2563eb;">
               <h2 style="color: #1e293b; margin: 0 0 20px 0; font-size: 20px;">Informations du contact</h2>
@@ -60,12 +64,10 @@ export async function sendEmail(prevState: any, formData: FormData) {
                 </div>
               </div>
             </div>
-
             <div style="background-color: #ffffff; padding: 25px; border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 25px;">
               <h3 style="color: #1e293b; margin: 0 0 15px 0; font-size: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Message:</h3>
               <div style="line-height: 1.7; color: #475569; font-size: 16px; white-space: pre-wrap;">${message}</div>
             </div>
-
             <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); padding: 20px; border-radius: 12px; text-align: center;">
               <p style="margin: 0; font-size: 14px; color: #1e40af;">
                 📧 Ce message a été envoyé depuis votre portfolio personnel
@@ -88,7 +90,6 @@ export async function sendEmail(prevState: any, formData: FormData) {
 
     // Envoi de l'email
     await transporter.sendMail(mailOptions)
-
     return { success: true, message: "Message envoyé avec succès! Je vous répondrai bientôt." }
   } catch (error) {
     console.error("Erreur lors de l'envoi de l'email:", error)
